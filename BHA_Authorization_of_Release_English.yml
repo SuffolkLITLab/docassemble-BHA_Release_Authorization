@@ -1,0 +1,187 @@
+include:
+  - docassemble.MAVirtualCourt:basic-questions.yml
+---
+comment: |
+  The metadata section controls the tab title and saved interview title. You can delete this section if you include this YAML file in another YAML file.
+metadata:
+  title: |
+    BHA Authorization of Release
+  short title: |
+    Authorization of Release
+---
+comment: |
+  This section is used by MAVirtualCourts to control how some of the questions work.
+mandatory: True
+code: |
+  interview_metadata # make sure we initialize the object
+  if not defined("interview_metadata['BHA_Authorization_of_Release_English']"):
+    interview_metadata.initializeObject('BHA_Authorization_of_Release_English')
+  interview_metadata['BHA_Authorization_of_Release_English'].update({
+    'title': 'BHA Authorization of Release',
+    'short title': 'Authorization of Release',
+    'description': 'Form to grant Boston Housing Authority access to inspect/copy records.',
+    'original_form': '',
+    'allowed courts': [
+    ],
+    'categories': [
+      'Housing',
+    ],
+    'logic block variable': 'BHA_Authorization_of_Release_English',
+    'attachment block variable': 'BHA_Authorization_of_Release_English_attachment',
+    'typical role': 'plaintiff',
+  })
+---
+features:
+  navigation: True
+---
+sections:
+  - review_BHA_Authorization_of_Release_English: Review your answers
+---
+id: interview_order_BHA_Authorization_of_Release_English
+code: |
+  # This is a placeholder to control logic flow in this interview
+
+  basic_questions_intro_screen 
+  BHA_Authorization_of_Release_English_intro
+  # Set the allowed courts for this interview
+  allowed_courts = interview_metadata["BHA_Authorization_of_Release_English"]["allowed courts"]
+  nav.set_section('review_BHA_Authorization_of_Release_English')
+  user_role = 'plaintiff'
+  Tell_us_about_yourself
+  Agency_Information
+  Date
+  # Set the answer file name.
+  set_parts(subtitle=str(users))
+  users[0]
+  set_progress(14.29)
+  users[0].address.address
+  # Save (anonymized) interview statistics.
+  store_variables_snapshot(data={'zip': users[0].address.zip})
+  BHA_Authorization_of_Release_English_preview_question # Pre-canned preview screen
+  basic_questions_signature_flow
+  users[0].signature
+  BHA_Authorization_of_Release_English = True
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: BHA Authorization of Release
+continue button field: BHA_Authorization_of_Release_English_intro
+question: |
+  BHA Authorization of Release
+subquestion: |
+  Form to grant Boston Housing Authority access to inspect/copy records.
+---
+id: Review your form before you sign it
+continue button field: BHA_Authorization_of_Release_English_preview_question
+question: |
+  Review your form before you sign it
+subquestion: |
+  Here is a preview of the form you'll sign on the next page. 
+  
+   ${ pdf_concatenate(BHA_Authorization_of_Release_English_attachment['preview'], filename='BHA_Authorization_of_Release_English.pdf')}
+---
+id: Tell us about yourself
+continue button field: Tell_us_about_yourself
+question: |
+  Tell us about yourself
+subquestion: |
+  Placeholder text
+fields:
+  - 'User[0]': user[0]
+  - 'User social security': user_social_security
+    datatype: number
+---
+id: Agency Information
+continue button field: Agency_Information
+question: |
+  Agency Information
+subquestion: |
+  Placeholder text
+fields:
+  - 'Client control number>': client_control_number>
+    datatype: number
+  - 'Agency': agency
+  - 'Agency phone number': agency_phone_number
+    datatype: number
+  - 'Agency relationship': agency_relationship
+---
+id: Date
+continue button field: Date
+question: |
+  Date
+subquestion: |
+  Placeholder text
+fields:
+  - 'Date': date
+    datatype: date
+---
+progress: 100
+mandatory: True
+id: Your form is ready to download and file
+question: |
+  Your form is ready to download and file
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  Below is a preview of your form.
+  
+  ${pdf_concatenate(BHA_Authorization_of_Release_English_attachment['final'], filename='BHA_Authorization_of_Release_English.pdf') }
+need: BHA_Authorization_of_Release_English
+attachment code: BHA_Authorization_of_Release_English_attachment['final']
+---
+objects:
+  - BHA_Authorization_of_Release_English_attachment: DADict
+---
+attachment:
+    variable name: BHA_Authorization_of_Release_English_attachment[i]
+    name: Authorization of Release
+    filename: Authorization_of_Release
+    docx template file: BHA_Authorization_of_Release_English.docx
+---
+id: BHA_Authorization_of_Release_English review screen
+event: review_BHA_Authorization_of_Release_English
+question: |
+  Placeholder Review Screen
+subquestion: |
+  Edit your answers below
+review: 
+  - Edit: date
+    button: |
+      Date:
+      ${ date.format() }
+  - Edit: user[0]
+    button: |
+      User[0]:
+      ${ user[0] }
+  - Edit: client_control_number>
+    button: |
+      Client control number>:
+      ${ client_control_number> }
+  - Edit: agency
+    button: |
+      Agency:
+      ${ agency }
+  - Edit: agency_phone_number
+    button: |
+      Agency phone number:
+      ${ agency_phone_number }
+  - Edit: agency_relationship
+    button: |
+      Agency relationship:
+      ${ agency_relationship }
+  - Edit: user_social_security
+    button: |
+      User social security:
+      ${ user_social_security }
+  - Edit: users[0].name.first
+    button: |
+      users[0]:
+      ${ users[0] }
+  - Edit: users[0].signature
+    button: |
+      users[0].signature:
+      ${ users[0].signature }
+  - Edit: users[0].address.address
+    button: |
+      users[0].address.address:
+      ${ users[0].address.address }
